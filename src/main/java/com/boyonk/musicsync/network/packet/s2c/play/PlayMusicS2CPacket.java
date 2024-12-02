@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 public record PlayMusicS2CPacket(RegistryEntry<SoundEvent> sound, long seed) implements CustomPayload {
 
-	public static final Id<PlayMusicS2CPacket> ID = new Id<>(new Identifier(MusicSync.NAMESPACE, "play_music"));
+	public static final Id<PlayMusicS2CPacket> ID = new Id<>(Identifier.of(MusicSync.NAMESPACE, "play_music"));
 	public static final PacketCodec<RegistryByteBuf, PlayMusicS2CPacket> CODEC = PacketCodec.tuple(
 			SoundEvent.ENTRY_PACKET_CODEC, PlayMusicS2CPacket::sound,
 			PacketCodecs.VAR_LONG, PlayMusicS2CPacket::seed,

@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 
 public record StopMusicS2CPacket() implements CustomPayload {
 
-	public static final Id<StopMusicS2CPacket> ID = new Id<>(new Identifier(MusicSync.NAMESPACE, "stop_music"));
+	public static final Id<StopMusicS2CPacket> ID = new Id<>(Identifier.of(MusicSync.NAMESPACE, "stop_music"));
 	public static final PacketCodec<RegistryByteBuf, StopMusicS2CPacket> CODEC = PacketCodec.unit(new StopMusicS2CPacket());
 
 	@Override
