@@ -17,13 +17,13 @@ import net.minecraft.sound.SoundEvent;
 
 public class MusicSync implements ModInitializer {
 
-	public static final String NAMESPACE = "musicsync";
+	public static final String NAMESPACE = "music_sync";
 
 	public static final PacketCodec<RegistryByteBuf, MusicSound> MUSIC_SOUND_PACKET_CODEC = PacketCodec.tuple(
 			SoundEvent.ENTRY_PACKET_CODEC, MusicSound::getSound,
 			PacketCodecs.VAR_INT, MusicSound::getMinDelay,
 			PacketCodecs.VAR_INT, MusicSound::getMaxDelay,
-			PacketCodecs.BOOL, MusicSound::shouldReplaceCurrentMusic,
+			PacketCodecs.BOOLEAN, MusicSound::shouldReplaceCurrentMusic,
 			MusicSound::new
 	);
 

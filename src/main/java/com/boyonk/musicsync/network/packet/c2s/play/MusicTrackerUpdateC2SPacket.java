@@ -16,7 +16,7 @@ public record MusicTrackerUpdateC2SPacket(Optional<MusicSound> type, boolean pla
 	public static final Id<MusicTrackerUpdateC2SPacket> ID = new Id<>(Identifier.of(MusicSync.NAMESPACE, "music_tracker_update"));
 	public static final PacketCodec<RegistryByteBuf, MusicTrackerUpdateC2SPacket> CODEC = PacketCodec.tuple(
 			PacketCodecs.optional(MusicSync.MUSIC_SOUND_PACKET_CODEC), MusicTrackerUpdateC2SPacket::type,
-			PacketCodecs.BOOL, MusicTrackerUpdateC2SPacket::playing,
+			PacketCodecs.BOOLEAN, MusicTrackerUpdateC2SPacket::playing,
 			MusicTrackerUpdateC2SPacket::new
 	);
 

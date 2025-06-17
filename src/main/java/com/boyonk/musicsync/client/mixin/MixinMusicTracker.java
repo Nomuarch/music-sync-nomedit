@@ -5,10 +5,7 @@ import com.boyonk.musicsync.client.TemporaryRandomSetter;
 import com.boyonk.musicsync.network.packet.c2s.play.MusicTrackerUpdateC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.MusicTracker;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.sound.*;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundEvent;
@@ -22,10 +19,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Mixin(MusicTracker.class)
-public class MixinMusicTracker implements ClientMusicTracker {
+public abstract class MixinMusicTracker implements ClientMusicTracker {
 
 	@Unique
 	private @Nullable MusicSound musicsync$type = null;
@@ -46,11 +44,17 @@ public class MixinMusicTracker implements ClientMusicTracker {
 	@Shadow
 	private int timeUntilNextSong;
 
+	@Shadow protected abstract boolean canFadeTowardsVolume(float volume);
+
+	@Shadow private float volume;
+
 	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
 	void tick(CallbackInfo ci) {
 		if (this.isInGame()) {
-			MusicSound type = this.client.getMusicType();
-			this.setType(type);
+			MusicInstance instance = this.client.getMusicInstance();
+			this.setType(instance.music());
+
+			if(this.volume != instance.volume()) this.canFadeTowardsVolume(instance.volume());
 
 			if (this.current != null) {
 				if (!this.client.getSoundManager().isPlaying(this.current)) {
@@ -67,15 +71,15 @@ public class MixinMusicTracker implements ClientMusicTracker {
 	}
 
 	@Unique
-	private void setType(MusicSound type) {
-		if (!type.equals(musicsync$type)) {
+	private void setType(@Nullable MusicSound type) {
+		if (!Objects.equals(type, this.musicsync$type)) {
 			this.musicsync$type = type;
 			this.markDirty();
 		}
 	}
 
 	private void setPlaying(boolean playing) {
-		if (playing != musicsync$playing) {
+		if (playing != this.musicsync$playing) {
 			this.musicsync$playing = playing;
 			this.markDirty();
 		}
